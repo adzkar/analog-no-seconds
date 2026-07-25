@@ -9,6 +9,13 @@ class AnalogFourFieldApp extends Application.AppBase {
     function getInitialView() {
         return [new AnalogFourFieldView()];
     }
+
+    // Backs the on-device "Customize" prompt shown after selecting the
+    // watch face; without this the watch only offers "Apply".
+    function getSettingsView() {
+        var menu = new SettingsMenu();
+        return [menu, new SettingsMenuDelegate(menu)];
+    }
 }
 
 function getApp() {
