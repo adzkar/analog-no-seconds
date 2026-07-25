@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iq:manifest version="3" xmlns:iq="http://www.garmin.com/xml/connectiq">
+    <iq:application id="c2fd3f28-15e1-4e6d-9fde-8b3f51c2e90a" type="watchface" name="@Strings.AppName" entry="AnalogFourFieldApp" launcherIcon="@Drawables.LauncherIcon" minSdkVersion="5.1.0">
+        <iq:products>
+            <iq:product id="fr255" />
+        </iq:products>
+        <iq:permissions>
+            <iq:uses-permission id="SensorHistory" />
+        </iq:permissions>
+    </iq:application>
+</iq:manifest>

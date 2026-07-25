@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<strings>
+    <string id="AppName">Four Field Analog</string>
+    <string id="TopField">Top field</string>
+    <string id="RightField">Right field</string>
+    <string id="BottomField">Bottom field</string>
+    <string id="LeftField">Left field</string>
+    <string id="Date">Date</string>
+    <string id="Steps">Steps</string>
+    <string id="HeartRate">Heart rate</string>
+    <string id="Stress">Stress</string>
+    <string id="Battery">Battery</string>
+    <string id="Calories">Calories</string>
+    <string id="Distance">Distance</string>
+</strings>
