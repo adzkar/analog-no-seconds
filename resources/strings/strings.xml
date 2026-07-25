@@ -11,7 +11,9 @@
     <string id="Stress">Stress</string>
     <string id="Battery">Battery</string>
     <string id="Calories">Calories</string>
-    <string id="Distance">Distance</string>
+    <string id="Stairs">Stairs</string>
+    <string id="Vo2Max">VO2 Max</string>
+    <string id="BodyBattery">Body Battery</string>
     <string id="None">None</string>
     <string id="HourHandColor">Hour hand color</string>
     <string id="MinuteHandColor">Minute hand color</string>

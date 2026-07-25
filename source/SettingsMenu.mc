@@ -62,7 +62,7 @@ class SettingsMenuDelegate extends WatchUi.Menu2InputDelegate {
     function onSelect(item) {
         var propertyKey = item.getId();
         var isField = FIELD_KEYS.indexOf(propertyKey) >= 0;
-        var optionCount = isField ? 8 : 8;
+        var optionCount = isField ? FieldOptions.COUNT : 8;
         var picker = new OptionPickerMenu(item.getLabel(), propertyKey, optionCount, isField);
         var delegate = new OptionPickerDelegate(propertyKey, isField, menu);
         WatchUi.pushView(picker, delegate, WatchUi.SLIDE_LEFT);

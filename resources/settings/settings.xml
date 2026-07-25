@@ -8,8 +8,10 @@
             <listEntry value="3">@Strings.Stress</listEntry>
             <listEntry value="4">@Strings.Battery</listEntry>
             <listEntry value="5">@Strings.Calories</listEntry>
-            <listEntry value="6">@Strings.Distance</listEntry>
-            <listEntry value="7">@Strings.None</listEntry>
+            <listEntry value="6">@Strings.Stairs</listEntry>
+            <listEntry value="7">@Strings.Vo2Max</listEntry>
+            <listEntry value="8">@Strings.BodyBattery</listEntry>
+            <listEntry value="9">@Strings.None</listEntry>
         </settingConfig>
     </setting>
     <setting propertyKey="@Properties.RightField" title="@Strings.RightField">
@@ -20,8 +22,10 @@
             <listEntry value="3">@Strings.Stress</listEntry>
             <listEntry value="4">@Strings.Battery</listEntry>
             <listEntry value="5">@Strings.Calories</listEntry>
-            <listEntry value="6">@Strings.Distance</listEntry>
-            <listEntry value="7">@Strings.None</listEntry>
+            <listEntry value="6">@Strings.Stairs</listEntry>
+            <listEntry value="7">@Strings.Vo2Max</listEntry>
+            <listEntry value="8">@Strings.BodyBattery</listEntry>
+            <listEntry value="9">@Strings.None</listEntry>
         </settingConfig>
     </setting>
     <setting propertyKey="@Properties.BottomField" title="@Strings.BottomField">
@@ -32,8 +36,10 @@
             <listEntry value="3">@Strings.Stress</listEntry>
             <listEntry value="4">@Strings.Battery</listEntry>
             <listEntry value="5">@Strings.Calories</listEntry>
-            <listEntry value="6">@Strings.Distance</listEntry>
-            <listEntry value="7">@Strings.None</listEntry>
+            <listEntry value="6">@Strings.Stairs</listEntry>
+            <listEntry value="7">@Strings.Vo2Max</listEntry>
+            <listEntry value="8">@Strings.BodyBattery</listEntry>
+            <listEntry value="9">@Strings.None</listEntry>
         </settingConfig>
     </setting>
     <setting propertyKey="@Properties.LeftField" title="@Strings.LeftField">
@@ -44,8 +50,10 @@
             <listEntry value="3">@Strings.Stress</listEntry>
             <listEntry value="4">@Strings.Battery</listEntry>
             <listEntry value="5">@Strings.Calories</listEntry>
-            <listEntry value="6">@Strings.Distance</listEntry>
-            <listEntry value="7">@Strings.None</listEntry>
+            <listEntry value="6">@Strings.Stairs</listEntry>
+            <listEntry value="7">@Strings.Vo2Max</listEntry>
+            <listEntry value="8">@Strings.BodyBattery</listEntry>
+            <listEntry value="9">@Strings.None</listEntry>
         </settingConfig>
     </setting>
     <setting propertyKey="@Properties.HourHandColor" title="@Strings.HourHandColor">

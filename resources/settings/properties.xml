@@ -2,7 +2,7 @@
 <properties>
     <property id="TopField" type="number">3</property>
     <property id="RightField" type="number">0</property>
-    <property id="BottomField" type="number">7</property>
+    <property id="BottomField" type="number">9</property>
     <property id="LeftField" type="number">2</property>
     <property id="HourHandColor" type="number">0</property>
     <property id="MinuteHandColor" type="number">0</property>

@@ -1,9 +1,10 @@
 using Toybox.WatchUi;
 
-// Shared field-type ids (0-7) kept in sync with
+// Shared field-type ids (0-9) kept in sync with
 // resources/settings/settings.xml and resources/settings/properties.xml.
 module FieldOptions {
-    const NONE = 7;
+    const NONE = 9;
+    const COUNT = 10;
 
     function labelResource(id) {
         switch (id) {
@@ -20,7 +21,11 @@ module FieldOptions {
             case 5:
                 return Rez.Strings.Calories;
             case 6:
-                return Rez.Strings.Distance;
+                return Rez.Strings.Stairs;
+            case 7:
+                return Rez.Strings.Vo2Max;
+            case 8:
+                return Rez.Strings.BodyBattery;
             default:
                 return Rez.Strings.None;
         }
