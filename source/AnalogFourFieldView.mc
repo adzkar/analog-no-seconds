@@ -10,10 +10,6 @@ using Toybox.Time.Gregorian;
 using Toybox.WatchUi;
 
 class AnalogFourFieldView extends WatchUi.WatchFace {
-    const BACKGROUND_COLOR = Gfx.COLOR_BLACK;
-    const PRIMARY_COLOR = Gfx.COLOR_WHITE;
-    const SECONDARY_COLOR = Gfx.COLOR_LT_GRAY;
-    const ACCENT_COLOR = Gfx.COLOR_BLUE;
 
     function initialize() {
         WatchFace.initialize();
@@ -29,87 +25,153 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
         var activityInfo = ActivityMonitor.getInfo();
         var currentActivity = Activity.getActivityInfo();
 
-        dc.setColor(BACKGROUND_COLOR, BACKGROUND_COLOR);
+        var backgroundId = Application.Properties.getValue("BackgroundColor");
+        var backgroundColor = ColorOptions.colorFor(backgroundId);
+        var foregroundColor = ColorOptions.contrastFor(backgroundId);
+        var hourColor = ColorOptions.colorFor(Application.Properties.getValue("HourHandColor"));
+        var minuteColor = ColorOptions.colorFor(Application.Properties.getValue("MinuteHandColor"));
+        var accentColor = ColorOptions.colorFor(Application.Properties.getValue("AccentColor"));
+
+        dc.setColor(backgroundColor, backgroundColor);
         dc.clear();
-        drawHands(dc, centerX, centerY, radius, clock.hour, clock.min);
-        drawField(dc, "TopField", centerX, centerY - radius + 15, activityInfo, currentActivity);
-        drawField(dc, "RightField", centerX + radius - 28, centerY - 4, activityInfo, currentActivity);
-        drawField(dc, "BottomField", centerX, centerY + radius - 23, activityInfo, currentActivity);
-        drawField(dc, "LeftField", centerX - radius + 28, centerY - 4, activityInfo, currentActivity);
+        drawHands(dc, centerX, centerY, radius, clock.hour, clock.min, hourColor, minuteColor, accentColor);
+
+        var theme = { :foreground => foregroundColor, :accent => accentColor, :background => backgroundColor } as Lang.Dictionary<Lang.Symbol, Lang.Number>;
+        drawField(dc, "TopField", centerX, centerY - radius + 17, activityInfo, currentActivity, theme);
+        drawField(dc, "RightField", centerX + radius - 30, centerY - 2, activityInfo, currentActivity, theme);
+        drawField(dc, "BottomField", centerX, centerY + radius - 21, activityInfo, currentActivity, theme);
+        drawField(dc, "LeftField", centerX - radius + 30, centerY - 2, activityInfo, currentActivity, theme);
     }
 
     function onSettingsChanged() {
         WatchUi.requestUpdate();
     }
 
-    function drawHands(dc, centerX, centerY, radius, hour, minute) {
+    function drawHands(dc, centerX, centerY, radius, hour, minute, hourColor, minuteColor, accentColor) {
         var hourAngle = ((hour % 12) + minute / 60.0) * Math.PI / 6.0 - Math.PI / 2.0;
         var minuteAngle = minute * Math.PI / 30.0 - Math.PI / 2.0;
 
-        dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
+        dc.setColor(hourColor, Gfx.COLOR_TRANSPARENT);
         dc.setPenWidth(5);
         dc.drawLine(centerX, centerY, centerX + Math.cos(hourAngle) * radius * 0.45, centerY + Math.sin(hourAngle) * radius * 0.45);
+        dc.setColor(minuteColor, Gfx.COLOR_TRANSPARENT);
         dc.setPenWidth(3);
         dc.drawLine(centerX, centerY, centerX + Math.cos(minuteAngle) * radius * 0.68, centerY + Math.sin(minuteAngle) * radius * 0.68);
-        dc.setColor(ACCENT_COLOR, Gfx.COLOR_TRANSPARENT);
+        dc.setColor(accentColor, Gfx.COLOR_TRANSPARENT);
         dc.fillCircle(centerX, centerY, 4);
     }
 
-    function drawField(dc, propertyKey, x, y, activityInfo, currentActivity) {
+    function drawField(dc, propertyKey, x, y, activityInfo, currentActivity, theme) {
         var field = Application.Properties.getValue(propertyKey);
-        if (field == null || field == 7) {
+        if (field == null || field == FieldOptions.NONE) {
             return;
         }
 
         var data = getFieldData(field, activityInfo, currentActivity);
-        dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
+        dc.setColor(theme[:foreground], Gfx.COLOR_TRANSPARENT);
         if (field == 0) {
             dc.drawText(x, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
             return;
         }
 
-        drawFieldIcon(dc, field, x - 11, y + 5);
-        dc.drawText(x + 5, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+        drawFieldIcon(dc, field, x - 15, y + 5, theme, data);
+        dc.drawText(x + 8, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
     }
 
-    function drawFieldIcon(dc, field, x, y) {
-        dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
-        dc.setPenWidth(1);
+    // Larger, more literal glyphs (~9-10px) so each field reads clearly at a
+    // glance; icons are allowed to sit close to / overlap the watch hands.
+    function drawFieldIcon(dc, field, x, y, theme, data) {
+        dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
+        dc.setPenWidth(2);
         switch (field) {
             case 1:
-                dc.fillCircle(x - 2, y - 3, 2);
-                dc.fillCircle(x + 2, y + 3, 2);
+                drawStepsIcon(dc, x, y);
                 break;
             case 2:
-                dc.drawLine(x - 5, y - 1, x - 2, y - 4);
-                dc.drawLine(x - 2, y - 4, x, y - 1);
-                dc.drawLine(x, y - 1, x + 2, y - 4);
-                dc.drawLine(x + 2, y - 4, x + 5, y - 1);
-                dc.drawLine(x + 5, y - 1, x, y + 5);
-                dc.drawLine(x, y + 5, x - 5, y - 1);
+                drawHeartIcon(dc, x, y);
                 break;
             case 3:
-                dc.drawLine(x - 5, y + 2, x - 2, y - 3);
-                dc.drawLine(x - 2, y - 3, x + 1, y + 2);
-                dc.drawLine(x + 1, y + 2, x + 5, y - 3);
+                drawStressIcon(dc, x, y);
                 break;
             case 4:
-                dc.drawRectangle(x - 5, y - 4, 9, 8);
-                dc.fillRectangle(x + 4, y - 2, 2, 4);
-                dc.fillRectangle(x - 3, y - 2, 4, 4);
+                drawBatteryIcon(dc, x, y, theme, data);
                 break;
             case 5:
-                dc.drawLine(x, y - 5, x - 3, y);
-                dc.drawLine(x - 3, y, x, y + 5);
-                dc.drawLine(x, y + 5, x + 3, y);
-                dc.drawLine(x + 3, y, x, y - 5);
+                drawCaloriesIcon(dc, x, y);
                 break;
             case 6:
-                dc.drawCircle(x, y - 2, 3);
-                dc.drawLine(x - 2, y, x, y + 5);
-                dc.drawLine(x, y + 5, x + 2, y);
+                drawDistanceIcon(dc, x, y, theme);
                 break;
         }
+    }
+
+    // Two overlapping footprint pads.
+    function drawStepsIcon(dc, x, y) {
+        dc.fillEllipse(x - 2, y + 3, 4, 6);
+        dc.fillEllipse(x + 3, y - 4, 3, 5);
+    }
+
+    // Classic heart shape: two lobes plus a triangular point.
+    function drawHeartIcon(dc, x, y) {
+        dc.fillCircle(x - 3, y - 2, 4);
+        dc.fillCircle(x + 3, y - 2, 4);
+        dc.fillPolygon([
+            [x - 7, y - 1],
+            [x + 7, y - 1],
+            [x, y + 8]
+        ]);
+    }
+
+    // Pulse / EKG-style zigzag line.
+    function drawStressIcon(dc, x, y) {
+        dc.drawLine(x - 8, y, x - 4, y);
+        dc.drawLine(x - 4, y, x - 2, y - 7);
+        dc.drawLine(x - 2, y - 7, x + 1, y + 7);
+        dc.drawLine(x + 1, y + 7, x + 3, y);
+        dc.drawLine(x + 3, y, x + 8, y);
+    }
+
+    // Battery outline with a terminal nub, filled to the current level.
+    function drawBatteryIcon(dc, x, y, theme, data) {
+        dc.setColor(theme[:foreground], Gfx.COLOR_TRANSPARENT);
+        dc.setPenWidth(2);
+        dc.drawRoundedRectangle(x - 8, y - 6, 15, 12, 2);
+        dc.fillRectangle(x + 7, y - 3, 2, 6);
+
+        var level = data[:level];
+        if (level != null && level > 0) {
+            var fillWidth = (11 * level / 100.0).toNumber();
+            if (fillWidth < 1) {
+                fillWidth = 1;
+            }
+            dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
+            dc.fillRectangle(x - 6, y - 4, fillWidth, 8);
+        }
+    }
+
+    // Flame silhouette.
+    function drawCaloriesIcon(dc, x, y) {
+        dc.fillPolygon([
+            [x, y - 8],
+            [x + 5, y - 2],
+            [x + 4, y + 4],
+            [x, y + 8],
+            [x - 4, y + 4],
+            [x - 5, y - 2]
+        ]);
+    }
+
+    // Map-pin marker.
+    function drawDistanceIcon(dc, x, y, theme) {
+        dc.fillCircle(x, y - 2, 6);
+        dc.fillPolygon([
+            [x - 5, y],
+            [x + 5, y],
+            [x, y + 9]
+        ]);
+        dc.setColor(theme[:background], Gfx.COLOR_TRANSPARENT);
+        dc.fillCircle(x, y - 2, 2);
+        dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
     }
 
     function getFieldData(field, activityInfo, currentActivity) {
@@ -124,7 +186,8 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
             case 3:
                 return { :value => displayValue(activityInfo.stressScore) };
             case 4:
-                return { :value => Lang.format("$1$%", [System.getSystemStats().battery]) };
+                var battery = System.getSystemStats().battery;
+                return { :value => Lang.format("$1$%", [battery.toNumber()]), :level => battery };
             case 5:
                 return { :value => displayValue(activityInfo.calories) };
             case 6:
