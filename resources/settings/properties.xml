@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<properties>
+    <property id="TopField" type="number">0</property>
+    <property id="RightField" type="number">2</property>
+    <property id="BottomField" type="number">1</property>
+    <property id="LeftField" type="number">3</property>
+</properties>
