@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <strings>
-    <string id="AppName">Four Field Analog</string>
+    <string id="AppName">Analog No Seconds</string>
     <string id="TopField">Top field</string>
     <string id="RightField">Right field</string>
     <string id="BottomField">Bottom field</string>
@@ -12,4 +12,5 @@
     <string id="Battery">Battery</string>
     <string id="Calories">Calories</string>
     <string id="Distance">Distance</string>
+    <string id="None">None</string>
 </strings>

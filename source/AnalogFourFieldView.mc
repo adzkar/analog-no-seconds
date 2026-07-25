@@ -13,7 +13,7 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
     const BACKGROUND_COLOR = Gfx.COLOR_BLACK;
     const PRIMARY_COLOR = Gfx.COLOR_WHITE;
     const SECONDARY_COLOR = Gfx.COLOR_LT_GRAY;
-    const ACCENT_COLOR = Gfx.COLOR_CYAN;
+    const ACCENT_COLOR = Gfx.COLOR_BLUE;
 
     function initialize() {
         WatchFace.initialize();
@@ -31,31 +31,15 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
 
         dc.setColor(BACKGROUND_COLOR, BACKGROUND_COLOR);
         dc.clear();
-        drawDial(dc, centerX, centerY, radius);
         drawHands(dc, centerX, centerY, radius, clock.hour, clock.min);
-        drawField(dc, "TopField", centerX, centerY - radius + 17, activityInfo, currentActivity);
-        drawField(dc, "RightField", centerX + radius - 31, centerY - 8, activityInfo, currentActivity);
-        drawField(dc, "BottomField", centerX, centerY + radius - 34, activityInfo, currentActivity);
-        drawField(dc, "LeftField", centerX - radius + 31, centerY - 8, activityInfo, currentActivity);
+        drawField(dc, "TopField", centerX, centerY - radius + 15, activityInfo, currentActivity);
+        drawField(dc, "RightField", centerX + radius - 28, centerY - 4, activityInfo, currentActivity);
+        drawField(dc, "BottomField", centerX, centerY + radius - 23, activityInfo, currentActivity);
+        drawField(dc, "LeftField", centerX - radius + 28, centerY - 4, activityInfo, currentActivity);
     }
 
     function onSettingsChanged() {
         WatchUi.requestUpdate();
-    }
-
-    function drawDial(dc, centerX, centerY, radius) {
-        dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
-        dc.drawCircle(centerX, centerY, radius);
-
-        for (var mark = 0; mark < 12; mark += 1) {
-            var angle = mark * Math.PI / 6.0 - Math.PI / 2.0;
-            var outerX = centerX + Math.cos(angle) * (radius - 4);
-            var outerY = centerY + Math.sin(angle) * (radius - 4);
-            var innerX = centerX + Math.cos(angle) * (radius - 10);
-            var innerY = centerY + Math.sin(angle) * (radius - 10);
-            dc.drawLine(outerX, outerY, innerX, innerY);
-        }
     }
 
     function drawHands(dc, centerX, centerY, radius, hour, minute) {
@@ -73,36 +57,83 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
 
     function drawField(dc, propertyKey, x, y, activityInfo, currentActivity) {
         var field = Application.Properties.getValue(propertyKey);
-        var data = getFieldData(field, activityInfo, currentActivity);
+        if (field == null || field == 7) {
+            return;
+        }
 
-        dc.setColor(SECONDARY_COLOR, Gfx.COLOR_TRANSPARENT);
-        dc.drawText(x, y, Gfx.FONT_XTINY, data[:label], Gfx.TEXT_JUSTIFY_CENTER);
+        var data = getFieldData(field, activityInfo, currentActivity);
         dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
-        dc.drawText(x, y + 12, Gfx.FONT_SMALL, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+        if (field == 0) {
+            dc.drawText(x, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+            return;
+        }
+
+        drawFieldIcon(dc, field, x - 11, y + 5);
+        dc.drawText(x + 5, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+    }
+
+    function drawFieldIcon(dc, field, x, y) {
+        dc.setColor(PRIMARY_COLOR, Gfx.COLOR_TRANSPARENT);
+        dc.setPenWidth(1);
+        switch (field) {
+            case 1:
+                dc.fillCircle(x - 2, y - 3, 2);
+                dc.fillCircle(x + 2, y + 3, 2);
+                break;
+            case 2:
+                dc.drawLine(x - 5, y - 1, x - 2, y - 4);
+                dc.drawLine(x - 2, y - 4, x, y - 1);
+                dc.drawLine(x, y - 1, x + 2, y - 4);
+                dc.drawLine(x + 2, y - 4, x + 5, y - 1);
+                dc.drawLine(x + 5, y - 1, x, y + 5);
+                dc.drawLine(x, y + 5, x - 5, y - 1);
+                break;
+            case 3:
+                dc.drawLine(x - 5, y + 2, x - 2, y - 3);
+                dc.drawLine(x - 2, y - 3, x + 1, y + 2);
+                dc.drawLine(x + 1, y + 2, x + 5, y - 3);
+                break;
+            case 4:
+                dc.drawRectangle(x - 5, y - 4, 9, 8);
+                dc.fillRectangle(x + 4, y - 2, 2, 4);
+                dc.fillRectangle(x - 3, y - 2, 4, 4);
+                break;
+            case 5:
+                dc.drawLine(x, y - 5, x - 3, y);
+                dc.drawLine(x - 3, y, x, y + 5);
+                dc.drawLine(x, y + 5, x + 3, y);
+                dc.drawLine(x + 3, y, x, y - 5);
+                break;
+            case 6:
+                dc.drawCircle(x, y - 2, 3);
+                dc.drawLine(x - 2, y, x, y + 5);
+                dc.drawLine(x, y + 5, x + 2, y);
+                break;
+        }
     }
 
     function getFieldData(field, activityInfo, currentActivity) {
         switch (field) {
             case 0:
-                var date = Gregorian.info(Time.now(), Time.FORMAT_SHORT);
-                return { :label => "DATE", :value => Lang.format("$1$/$2$", [date.day, date.month]) };
+                var date = Gregorian.info(Time.now(), Time.FORMAT_MEDIUM);
+                return { :value => Lang.format("$1$ $2$", [date.day_of_week, date.day]) };
             case 1:
-                return { :label => "STEPS", :value => displayValue(activityInfo.steps) };
+                return { :value => displayValue(activityInfo.steps) };
             case 2:
-                return { :label => "HEART", :value => displayValue(currentActivity.currentHeartRate) };
+                return { :value => displayValue(currentActivity.currentHeartRate) };
             case 3:
-                return { :label => "STRESS", :value => displayValue(activityInfo.stressScore) };
+                return { :value => displayValue(activityInfo.stressScore) };
             case 4:
-                return { :label => "BATTERY", :value => Lang.format("$1$%", [System.getSystemStats().battery]) };
+                return { :value => Lang.format("$1$%", [System.getSystemStats().battery]) };
             case 5:
-                return { :label => "CAL", :value => displayValue(activityInfo.calories) };
+                return { :value => displayValue(activityInfo.calories) };
             case 6:
                 if (activityInfo.distance == null) {
-                    return { :label => "DIST", :value => "--" };
+                    return { :value => "--" };
                 }
-                return { :label => "DIST", :value => Lang.format("$1$ km", [activityInfo.distance / 1000.0]) };
+                return { :value => Lang.format("$1$ km", [activityInfo.distance / 1000.0]) };
             default:
-                return { :label => "", :value => "--" };
+                return { :value => "--" };
         }
     }
 
