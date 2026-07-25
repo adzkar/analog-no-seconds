@@ -21,9 +21,29 @@ Each of the top, right, bottom, and left positions can independently show one of
 - Calories
 - Distance
 
-Selecting **None** leaves that position empty. Fields use compact white icons and values; the date is displayed without an icon.
+Selecting **None** leaves that position empty. Fields use accent-colored icons and values; the date is displayed without an icon. Icons are drawn large enough to read at a glance and may sit close to (or overlap) the watch hands.
 
 The default configuration is stress at the top, heart rate on the left, date on the right, and an empty bottom position.
+
+## Colors
+
+Four independent color settings are available, each from an 8-color palette (White, Black, Red, Orange, Yellow, Green, Blue, Gray):
+
+- Hour hand color
+- Minute hand color
+- Accent color (center dot and all field icons)
+- Background color
+
+Field value text automatically switches between white and black to stay legible against whatever background color is chosen.
+
+## Changing settings
+
+Settings can be changed two ways:
+
+- **On the watch**: select this watch face, then choose **Customize** from the Apply/Customize prompt. This opens an on-device menu for all four fields and all four colors.
+- **Via phone/computer**: use the Garmin Connect Mobile app or Garmin Express settings page for the app, which exposes the same options through `resources/settings/settings.xml`.
+
+Both paths read and write the same underlying properties, so changes made in one place are reflected in the other.
 
 ## Build and run
 
