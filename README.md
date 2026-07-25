@@ -30,24 +30,27 @@ The default configuration is stress at the top, heart rate on the left, date on 
 1. Install Garmin Connect IQ SDK Manager.
 2. Install and activate a Connect IQ SDK, then install the `fr255` device definition.
 3. Generate a Garmin developer key.
-4. Build and run from VS Code with **Monkey C: Run Without Debugging**, selecting `fr255`.
+4. Create a local `.env` file containing the developer-key path:
 
-To run from the command line:
+```sh
+DEVELOPER_KEY="/path/to/developer_key.der"
+```
+
+5. Build the signed watch-face file:
+
+```sh
+./scripts/build.sh
+```
+
+The output is written to `build/AnalogNoSeconds.prg`. The script resolves the active SDK automatically; set `SDK_PATH` before running it only if you need to override that SDK.
+
+To test the output in the simulator:
 
 ```sh
 SDK_PATH="/path/to/connectiq-sdk"
-DEVELOPER_KEY="/path/to/developer_key.der"
-OUTPUT_PATH="/tmp/AnalogNoSeconds.prg"
-
-"$SDK_PATH/bin/monkeyc" \
-  -d fr255 \
-  -f monkey.jungle \
-  -o "$OUTPUT_PATH" \
-  -y "$DEVELOPER_KEY" \
-  -w
 
 open "$SDK_PATH/bin/ConnectIQ.app"
-"$SDK_PATH/bin/monkeydo" "$OUTPUT_PATH" fr255
+"$SDK_PATH/bin/monkeydo" build/AnalogNoSeconds.prg fr255
 ```
 
 The developer key must remain private and must not be committed.
