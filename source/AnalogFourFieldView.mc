@@ -37,10 +37,10 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
         drawHands(dc, centerX, centerY, radius, clock.hour, clock.min, hourColor, minuteColor, accentColor);
 
         var theme = { :foreground => foregroundColor, :accent => accentColor, :background => backgroundColor } as Lang.Dictionary<Lang.Symbol, Lang.Number>;
-        drawField(dc, "TopField", centerX, centerY - radius + 17, activityInfo, currentActivity, theme);
-        drawField(dc, "RightField", centerX + radius - 30, centerY - 2, activityInfo, currentActivity, theme);
-        drawField(dc, "BottomField", centerX, centerY + radius - 21, activityInfo, currentActivity, theme);
-        drawField(dc, "LeftField", centerX - radius + 30, centerY - 2, activityInfo, currentActivity, theme);
+        drawField(dc, "TopField", centerX, centerY - radius + 20, activityInfo, currentActivity, theme);
+        drawField(dc, "RightField", centerX + radius - 34, centerY - 2, activityInfo, currentActivity, theme);
+        drawField(dc, "BottomField", centerX, centerY + radius - 24, activityInfo, currentActivity, theme);
+        drawField(dc, "LeftField", centerX - radius + 34, centerY - 2, activityInfo, currentActivity, theme);
     }
 
     function onSettingsChanged() {
@@ -70,19 +70,19 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
         var data = getFieldData(field, activityInfo, currentActivity);
         dc.setColor(theme[:foreground], Gfx.COLOR_TRANSPARENT);
         if (field == 0) {
-            dc.drawText(x, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+            dc.drawText(x, y, Gfx.FONT_TINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
             return;
         }
 
-        drawFieldIcon(dc, field, x - 15, y + 5, theme, data);
-        dc.drawText(x + 8, y, Gfx.FONT_XTINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
+        drawFieldIcon(dc, field, x - 20, y + 6, theme, data);
+        dc.drawText(x + 12, y, Gfx.FONT_TINY, data[:value], Gfx.TEXT_JUSTIFY_CENTER);
     }
 
-    // Larger, more literal glyphs (~9-10px) so each field reads clearly at a
+    // Large, literal glyphs (~15-18px) so each field reads clearly at a
     // glance; icons are allowed to sit close to / overlap the watch hands.
     function drawFieldIcon(dc, field, x, y, theme, data) {
         dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
+        dc.setPenWidth(3);
         switch (field) {
             case 1:
                 drawStepsIcon(dc, x, y);
@@ -107,70 +107,78 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
 
     // Two overlapping footprint pads.
     function drawStepsIcon(dc, x, y) {
-        dc.fillEllipse(x - 2, y + 3, 4, 6);
-        dc.fillEllipse(x + 3, y - 4, 3, 5);
+        dc.fillEllipse(x - 3, y + 4, 6, 8);
+        dc.fillEllipse(x + 4, y - 6, 4, 7);
     }
 
     // Classic heart shape: two lobes plus a triangular point.
     function drawHeartIcon(dc, x, y) {
-        dc.fillCircle(x - 3, y - 2, 4);
-        dc.fillCircle(x + 3, y - 2, 4);
+        dc.fillCircle(x - 4, y - 3, 6);
+        dc.fillCircle(x + 4, y - 3, 6);
         dc.fillPolygon([
-            [x - 7, y - 1],
-            [x + 7, y - 1],
-            [x, y + 8]
+            [x - 10, y - 1],
+            [x + 10, y - 1],
+            [x, y + 11]
         ]);
     }
 
-    // Pulse / EKG-style zigzag line.
+    // Stress "gauge" pictogram: a dial with a needle pointing toward the
+    // high end, echoing how Garmin's own stress score is shown as a gauge
+    // rather than a heartbeat line (which reads too much like heart rate).
     function drawStressIcon(dc, x, y) {
-        dc.drawLine(x - 8, y, x - 4, y);
-        dc.drawLine(x - 4, y, x - 2, y - 7);
-        dc.drawLine(x - 2, y - 7, x + 1, y + 7);
-        dc.drawLine(x + 1, y + 7, x + 3, y);
-        dc.drawLine(x + 3, y, x + 8, y);
+        var pivotX = x;
+        var pivotY = y + 6;
+        var dialRadius = 12;
+
+        dc.drawArc(pivotX, pivotY, dialRadius, Gfx.ARC_CLOCKWISE, 205, 335);
+
+        var needleAngle = 55 * Math.PI / 180.0;
+        dc.drawLine(pivotX, pivotY,
+            pivotX + Math.cos(needleAngle) * (dialRadius - 3),
+            pivotY - Math.sin(needleAngle) * (dialRadius - 3));
+        dc.fillCircle(pivotX, pivotY, 3);
     }
 
     // Battery outline with a terminal nub, filled to the current level.
     function drawBatteryIcon(dc, x, y, theme, data) {
         dc.setColor(theme[:foreground], Gfx.COLOR_TRANSPARENT);
-        dc.setPenWidth(2);
-        dc.drawRoundedRectangle(x - 8, y - 6, 15, 12, 2);
-        dc.fillRectangle(x + 7, y - 3, 2, 6);
+        dc.setPenWidth(3);
+        dc.drawRoundedRectangle(x - 11, y - 8, 21, 17, 3);
+        dc.fillRectangle(x + 10, y - 4, 3, 8);
 
         var level = data[:level];
         if (level != null && level > 0) {
-            var fillWidth = (11 * level / 100.0).toNumber();
+            var fillWidth = (15 * level / 100.0).toNumber();
             if (fillWidth < 1) {
                 fillWidth = 1;
             }
             dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
-            dc.fillRectangle(x - 6, y - 4, fillWidth, 8);
+            dc.fillRectangle(x - 8, y - 5, fillWidth, 11);
         }
     }
 
     // Flame silhouette.
     function drawCaloriesIcon(dc, x, y) {
         dc.fillPolygon([
-            [x, y - 8],
-            [x + 5, y - 2],
-            [x + 4, y + 4],
-            [x, y + 8],
-            [x - 4, y + 4],
-            [x - 5, y - 2]
+            [x, y - 11],
+            [x + 7, y - 3],
+            [x + 6, y + 6],
+            [x, y + 11],
+            [x - 6, y + 6],
+            [x - 7, y - 3]
         ]);
     }
 
     // Map-pin marker.
     function drawDistanceIcon(dc, x, y, theme) {
-        dc.fillCircle(x, y - 2, 6);
+        dc.fillCircle(x, y - 3, 8);
         dc.fillPolygon([
-            [x - 5, y],
-            [x + 5, y],
-            [x, y + 9]
+            [x - 7, y],
+            [x + 7, y],
+            [x, y + 13]
         ]);
         dc.setColor(theme[:background], Gfx.COLOR_TRANSPARENT);
-        dc.fillCircle(x, y - 2, 2);
+        dc.fillCircle(x, y - 3, 3);
         dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
     }
 
