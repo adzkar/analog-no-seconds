@@ -96,7 +96,7 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
                 drawHeartIcon(dc, x, y);
                 break;
             case 3:
-                drawStressIcon(dc, x, y);
+                drawStressIcon(dc, x, y, theme);
                 break;
             case 4:
                 drawBatteryIcon(dc, x, y, theme, data);
@@ -136,15 +136,21 @@ class AnalogFourFieldView extends WatchUi.WatchFace {
         ]);
     }
 
-    // Sweat drop: rounded base with a pointed top, a common "tension" glyph
-    // that reads clearly at small sizes and does not resemble heart rate.
-    function drawStressIcon(dc, x, y) {
-        dc.fillCircle(x, y + 3, 7);
+    // Person silhouette with a lightning bolt inside the head, matching
+    // Garmin's stress glyph so it is recognizable at a glance.
+    function drawStressIcon(dc, x, y, theme) {
+        dc.fillCircle(x, y - 3, 5);
+        dc.fillEllipse(x, y + 6, 8, 5);
+        dc.setColor(theme[:background], Gfx.COLOR_TRANSPARENT);
         dc.fillPolygon([
-            [x - 6, y - 1],
-            [x + 6, y - 1],
-            [x, y - 12]
+            [x, y - 7],
+            [x + 2, y - 7],
+            [x - 1, y - 4],
+            [x + 2, y - 4],
+            [x - 1, y - 1],
+            [x - 2, y - 4]
         ]);
+        dc.setColor(theme[:accent], Gfx.COLOR_TRANSPARENT);
     }
 
     // Battery outline with a terminal nub, filled to the current level.
